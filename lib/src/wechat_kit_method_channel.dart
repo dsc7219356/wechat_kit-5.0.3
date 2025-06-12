@@ -401,7 +401,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
   }) {
     assert(title == null || title.length <= 512);
     assert(description == null || description.length <= 1024);
-    assert(thumbData == null || thumbData.lengthInBytes <= 32 * 1024);
+    assert(thumbData == null || thumbData.lengthInBytes <= 128 * 1024);
     assert(webpageUrl.length <= 10 * 1024);
     return methodChannel.invokeMethod<void>(
       'shareWebpage',
