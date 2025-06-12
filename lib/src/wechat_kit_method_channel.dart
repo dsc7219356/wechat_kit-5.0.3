@@ -16,18 +16,14 @@ import 'package:wechat_kit/src/wechat_kit_platform_interface.dart';
 class MethodChannelWechatKit extends WechatKitPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  late final MethodChannel methodChannel =
-      const MethodChannel('v7lin.github.io/wechat_kit')
-        ..setMethodCallHandler(_handleMethod);
+  late final MethodChannel methodChannel = const MethodChannel('v7lin.github.io/wechat_kit')
+    ..setMethodCallHandler(_handleMethod);
 
-  final StreamController<WechatReq> _reqStreamController =
-      StreamController<WechatReq>.broadcast();
+  final StreamController<WechatReq> _reqStreamController = StreamController<WechatReq>.broadcast();
 
-  final StreamController<WechatResp> _respStreamController =
-      StreamController<WechatResp>.broadcast();
+  final StreamController<WechatResp> _respStreamController = StreamController<WechatResp>.broadcast();
 
-  final StreamController<WechatQrauthResp> _qrauthRespStreamController =
-      StreamController<WechatQrauthResp>.broadcast();
+  final StreamController<WechatQrauthResp> _qrauthRespStreamController = StreamController<WechatQrauthResp>.broadcast();
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     // 优先处理不需要参数的请求
@@ -36,8 +32,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
       return;
     }
 
-    final Map<String, dynamic> data =
-        (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>();
+    final Map<String, dynamic> data = (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>();
 
     switch (call.method) {
       // onReq
@@ -64,8 +59,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
         _respStreamController.add(WechatLaunchMiniProgramResp.fromJson(data));
         break;
       case 'onOpenCustomerServiceChatResp':
-        _respStreamController
-            .add(WechatOpenCustomerServiceChatResp.fromJson(data));
+        _respStreamController.add(WechatOpenCustomerServiceChatResp.fromJson(data));
         break;
       case 'onOpenBusinessViewResp':
         _respStreamController.add(WechatOpenBusinessViewResp.fromJson(data));
@@ -150,8 +144,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
     int type = WechatAuthType.kNormal,
   }) {
     assert((Platform.isAndroid && type == WechatAuthType.kNormal) ||
-        (Platform.isIOS &&
-            <int>[WechatAuthType.kNormal, WechatAuthType.kWeb].contains(type)));
+        (Platform.isIOS && <int>[WechatAuthType.kNormal, WechatAuthType.kWeb].contains(type)));
     return methodChannel.invokeMethod<void>('auth', <String, dynamic>{
       'scope': scope.join(','), // Scope
       if (state != null) 'state': state,
@@ -248,19 +241,13 @@ class MethodChannelWechatKit extends WechatKitPlatform {
     /// https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Share_and_Favorites/iOS.html
     assert(
       (imageData != null &&
-              ((Platform.isAndroid &&
-                      imageData.lengthInBytes <= 1 * 1024 * 1024) ||
-                  (Platform.isIOS &&
-                      imageData.lengthInBytes <= 10 * 1024 * 1024))) ||
+              ((Platform.isAndroid && imageData.lengthInBytes <= 1 * 1024 * 1024) ||
+                  (Platform.isIOS && imageData.lengthInBytes <= 10 * 1024 * 1024))) ||
           (imageUri != null &&
               imageUri.isScheme('file') &&
               imageUri.toFilePath().length <= 10 * 1024 &&
-              ((Platform.isAndroid &&
-                      File.fromUri(imageUri).lengthSync() <=
-                          25 * 1024 * 1024) ||
-                  (Platform.isIOS &&
-                      File.fromUri(imageUri).lengthSync() <=
-                          10 * 1024 * 1024))),
+              ((Platform.isAndroid && File.fromUri(imageUri).lengthSync() <= 25 * 1024 * 1024) ||
+                  (Platform.isIOS && File.fromUri(imageUri).lengthSync() <= 10 * 1024 * 1024))),
     );
     return methodChannel.invokeMethod<void>(
       'shareImage',
@@ -370,8 +357,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
         if (musicUrl != null) 'musicUrl': musicUrl,
         if (musicDataUrl != null) 'musicDataUrl': musicDataUrl,
         if (musicLowBandUrl != null) 'musicLowBandUrl': musicLowBandUrl,
-        if (musicLowBandDataUrl != null)
-          'musicLowBandDataUrl': musicLowBandDataUrl,
+        if (musicLowBandDataUrl != null) 'musicLowBandDataUrl': musicLowBandDataUrl,
       },
     );
   }
@@ -446,7 +432,7 @@ class MethodChannelWechatKit extends WechatKitPlatform {
     assert(scene == WechatScene.kSession);
     assert(title == null || title.length <= 512);
     assert(description == null || description.length <= 1024);
-    assert(thumbData == null || thumbData.lengthInBytes <= 32 * 1024);
+    assert(thumbData == null || thumbData.lengthInBytes <= 128 * 1024);
     assert(hdImageData == null || hdImageData.lengthInBytes <= 128 * 1024);
     return methodChannel.invokeMethod<void>(
       'shareMiniProgram',
